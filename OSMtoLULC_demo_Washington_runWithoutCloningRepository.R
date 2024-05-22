@@ -91,15 +91,13 @@ plot(OSM_only_map)
 
 #load the global landcover map raster
 #global_lulc_map <- rast("E:/cec_v2/Land_cover_2015v2_30m_TIF/NA_NALCMS_landcover_2015v2_30m/data/NA_NALCMS_landcover_2015v2_30m.tif")
-url <- "https://github.com/tgelmi-candusso/OSM_for_Ecology/raw/main/global_landcover_maps/Global_LULC_map_CEC_cropped_Washington.tif"
-download.file(url, destfile = "Global_LULC_map_CEC_cropped_Washington.tif", mode='wb')
-download.file("https://raw.githubusercontent.com/tgelmi-candusso/OSM_for_Ecology/main/global_landcover_maps/Global_LULC_map_CEC_cropped_Washington.tif.aux.xml",
-              destfile="Global_LULC_map_CEC_cropped_Washington.tif.aux.xml")
-CEC_map <- rast("Global_LULC_map_CEC_cropped_Washington.tif") 
+url <- "https://github.com/tgelmi-candusso/OSM_for_Ecology/raw/main/global_landcover_maps/Global_LULC_map_CEC_cropped_Washington.img"
+download.file(url, destfile = "Global_LULC_map_CEC_cropped_Washington.img", mode='wb')
+CEC_map <- rast("Global_LULC_map_CEC_cropped_Washington.img") 
+plot(CEC_map)
 
-CEC_map <- rast("global_landcover_maps/Global_LULC_map_CEC_cropped_Washington.tif") 
-writeRaster(CEC_map, "global_landcover_maps/Global_LULC_map_CEC_cropped_Washington.img",
-            datatype='INT1U', overwrite=TRUE)
+# CEC_map <- rast("global_landcover_maps/Global_LULC_map_CEC_cropped_Washington.tif") 
+
 
 #generate reclassification table, consisting of two columns, one with the global lulc code, and one with the corresponding OSM lulc code
 reclass_values <- read_csv("https://raw.githubusercontent.com/tgelmi-candusso/OSM_for_Ecology/main/reclass_tables/reclass_cec_2_mcsc.csv")
