@@ -1,6 +1,7 @@
 #################################
 #   OSM for ecology - demo   ####
-#  Gelmi-Candusso and Rodriguez #
+#   Gelmi-Candusso et al.    ####
+#       for MEE review       ####
 #################################
 
 #### Notes
