@@ -1,0 +1,65 @@
+,priority,feature,key,value,Description
+Landuse,1,Industrial,landuse,"industrial, fairground",Areas occupied by factories and other manufacturing companies 
+,,,industrial,factory,
+,2,Commercial,landuse,"commercial, retail",Areas occupied by commerical areas or retail areas where commercial activities happen
+,3,Institutional,landuse,"institutional, education, religious, military",Areas occupied by universities or hospitals
+,,,amenity,"school, hospital, university, fast_food, clinic, theatre, conference_center, place_of_worship, police",
+,,,leisure,golf_course,
+,,,healthcare,"clinic, hospital",
+,4,Residential,landuse,residential,"Areas occupied by residential buildings mainly, where people live"
+,5,Landuse: rail,landuse,railway,landscape area exclusive for railway use 
+,28,Developed: unclassified,NA,NA,landuse not available
+Natural cover,6,Open green area,landuse,"park, grass, cemetery, greenfield, recreation_ground, winter_sports","parks, landscaped areas, grass areas"
+,,,golf,not rough,
+,,,amenity,park,
+,,,leisure,"park, stadium, playground, pitch, sports_centre, stadium, pitch, picnic_table, pitch, dog_park, playground",
+,,,sport,soccer,
+,,,power,substation,
+,,,surface,grass,
+,7,Protected area,leisure,nature_reserve,protected areas with unclassified vegetation type
+,,,boundary,"protected_area, national_park",
+,,,protected_area,nature,
+,,,landuse,"nature_reserve, natural_reserve, landscape_reserve",
+,8,Resourceful/agricultural area,landuse,"orchard,farmland, landfill,vineyard, farmyard, allotments, allotment, farmland",green areas with fruits or vegetables
+,,,leisure,garden,
+,,,allotments,all,
+,9,Heterogenous green area,natural,"garden, scrub, shrubbery, tundra, cliff, shrub, wetland, grassland, fell, heath,moor",non managed green area
+,,,landuse,"plant_nursery, meadow, flowerbed, wetland",
+,,,meadow,all,
+,,,golf,rough,
+,,,grassland,pairie,
+,10,Barren soil,natural,"mud, dune, sand,scree,sinkhole, beach",areas without vegetation nor concrete. E.g. soil or sand
+,,,landuse,"brownfield, construction",
+,,,golf,bunker,
+,11,Dense/forested green area,landuse,forest,"forest, natural areas"
+,,,natural,wood,
+,,,boundary,"forest, forest_compartment",
+,12,Water,landuse,basin,water bodies
+,,,natural,"water, spring, waterway",
+,,,waterway,"river, stream, tidal_channel, canal, drain, ditch, yest",
+,,,water,"all, not intermittent",
+,,,basin,detention,
+,,,intermittent,not yes,
+,,,seasonal,not yes,
+,,,tidal,not yes,
+Physical infrastructure,13,Parking surface,parking,surface,"parking lots, only those on the surface"
+,,,aeroway,"runway, apron",
+,14,Building,building,"all, hospital, parking, industrial, school, commercial, terrace, detached, semideatched_house, house, retail, hotel, apartments, yes, airport, university","buildings, houses, etc"
+,,,parking,multi-storey,
+,,,aeroway,terminal,
+,15,Roads: very high traffic,highway,"motorway,motorway_link, motorway_junction","very high traffic volume, high speed, e.g. highways"
+,16,Roads: sidewalk,footway,sidewalk,sidewalks
+,17,Roads: unclassified,highway,"not(footway,construction,escape,cycleway,steps,bridleway,construction,path,pedestrian,track,abandoned, turning_loop,living_street, bicycle road, cyclestreet, cycleway lane,cycleway tracks, bus and cyclists, service,services, busway, sidewalk, residential, rest_area, primary, motorway_junction, secondary, secondary_link, tertiary, tertiary_link, motorway,motorway_link,trunk_link, trunk, corridor,elevator,platform,platform,crossing,proposed, razed)",unclassified roads
+,18,Roads: very low traffic,highway,"services,service,turning_loop,living_street","very low traffic volume, e.g. laneways"
+,19,Roads: low traffic,highway,"residential, rest_area, busway","low traffic volume, e.g. residential streets"
+,20,Roads: medium traffic,highway,"tertiary, tertiary_link",medium traffic volume
+,21,"Roads: high traffic, low speed",highway,"primary, primary_link, secondary, secondary_link","high traffic volume, low speed"
+,22,"Roads: high traffic, high speed",highway,"trunk, trunk_link","high traffic volume, high speed"
+,23,Public transport: streetcars/trams,railway,tram,"streetcars, trams, usually at the same level as roads"
+,24,Roads: pedestrian/trails,highway,"footway,construction,escape, cycleway,steps,bridleway,path,pedestrian,track, abandoned,bicycle road, cyclestreet, cycleway lane, cycleway tracks, bus and cyclists","linear features without vehicular traffic, mainly trails and walking paths"
+,,,footway,not sidewalk,
+,25,Public transport: railway,railway,"light_rail,narrow_gauge,rail,preserved,tram",railway tracks
+,,,railway,not tram,
+,26,Public transport: disused railway/highway,railway,"abandonded,construction,disused","abandoned, unused trailway tracks where vegetation has overgrown"
+,,,highway,construction,
+,27,Barriers,barrier,all,"any physical barrier to movement, however this class is too small for the current resolution (1m wide in a 30m cell map)"

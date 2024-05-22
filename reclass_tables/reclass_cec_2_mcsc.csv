@@ -1,0 +1,20 @@
+,cec,cec_value,mcsc,osm_value
+1, Temperate or sub-polar needleleaf forest,1,dense_green_area,11
+2, Sub-polar taiga needleleaf forest,2,dense_green_area,11
+3, Tropical or sub-tropical broadleaf evergreen forest,3,dense_green_area,11
+4, Tropical or sub-tropical broadleaf deciduous forest,4,dense_green_area,11
+5, Temperate or sub-polar broadleaf deciduous forest,5,dense_green_area,11
+6, Mixed forest,6,dense_green_area,11
+7, Tropical or sub-tropical shrubland,7,hetero_green_area,9
+8, Temperate or sub-polar shrubland,8,hetero_green_area,9
+9, Tropical or sub-tropical grassland,9,hetero_green_area,9
+10, Temperate or sub-polar grassland,10,hetero_green_area,9
+11, Sub-polar or polar shrubland-lichen-moss,11,hetero_green_area,9
+12, Sub-polar or polar grassland-lichen-moss,12,open_green_area,6
+13, Sub-polar or polar barren-lichen-moss,13,bare_soil,10
+14, Wetland,14,hetero_green_area,9
+15, Cropland,15,resourceful_green_area,8
+16, Barren lands,16,bare_soil,10
+17, Urban,17,developed_na,28
+18, Water,18,water,12
+19, Snow and Ice,19,water,12
