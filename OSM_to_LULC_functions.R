@@ -158,30 +158,31 @@ OSMtoLULC_rlayers <- function(OSM_LULC_vlayers, Spatextent){
   classL2 <- list()
   
   for(i in 1:28){
-    if(as.character(st_geometry_type(classL1[[i]], by_geometry = FALSE))=="MULTIPOLYGON"){
+    if(as.character(st_geometry_type(classL1[[i]], by_geometry = FALSE)) %in% c("MULTIPOLYGON", "GEOMETRY")){
       temp1 <- classL1[[i]]
       if(nrow(temp1)>0){
-        temp1$priority <- refTable$priority[i]
         # temp1 <- st_zm(temp1, drop = TRUE, what = "ZM") #drop any z & m dimensions or it won't convert to vector
-        temp1 <- terra::project(vect(temp1), rtemplate)
+        temp1 <- terra::project(svc(temp1)[1], rtemplate)
+        temp1$priority <- refTable$priority[i]
         classL2[[i]] <- terra::rasterize(temp1, rtemplate, field="priority") 
         print(paste0("layer ", i, "/28 ready"))
       }
     }else{
       temp1 <- classL1[[i]]
       if(!is.null(temp1)){
-        temp1$priority <- refTable$priority[i]
         temp1 <- st_transform(temp1, crs(rtemplate))
         temp1 <- st_buffer(temp1, dist=refTable$buffer[i])
         #temp1 <- terra::project(vect(tempt), rtemplate)
-        classL2[[i]] <- terra::rasterize(vect(temp1), rtemplate, field="priority")
+        temp1<-svc(temp1)[1]
+        temp1$priority <- refTable$priority[i]
+        classL2[[i]] <- terra::rasterize(temp1, rtemplate, field="priority")
         print(paste0("layer ", i, "/28 ready"))
       }else{print(paste0("layer ", i, "/28 null"))}
     }
   }
   return(classL2)
 }
-
+plot(classL2[[i]])
 #### OSM_only_LULC_map ####
 
 #needs a list of rasters with a value indicating their overlay priority

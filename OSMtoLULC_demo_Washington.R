@@ -31,16 +31,36 @@ osm_kv <- read.csv("urban_features/osm_key_values.csv") #table with the key-valu
 osm_kv <- osm_kv %>% filter(!is.na(key))
 keys <- unique(osm_kv$key)
 
-# Download database for both polygons and lines. 
+# Download database for both polygons and lines.
+# This function queries and downloads a database file based on the result of that query. 
+# The query can be either through a city name, a region, or a bounding box 
+# If the specific name queried is not found, the function will suggest the closest result found, and suggest a database file which it will download. This result might not be the one you meant. 
+# For regions queries like "us/illinois", "us/washington" work well. 
+# An alternative is to predownload the database file from geofabrik, store it and call it directly using the oe_get() function, the code for this is in the "Alt_Step1_with_predownloaded_database.R" script. 
+# For using bounding boxes as query I will leave here, and comment out an example to download Chicago.
 
-pol_feat <- osmextract::oe_get("Washington",
-                               provider="geofabrik",
-                               layer = "multipolygons", 
+#crop study area directly here using the 'clipsrc' boundary type
+
+#Chicago
+study_area_bbox <- st_bbox(ext(c(-88.38422408, -87.45238124, 41.49280305, 42.34485453)), crs=st_crs(4269)) #3857
+
+pol_feat <- osmextract::oe_get(place = "us/illinois", #can also use place = study_area_bbox to query for databases containing the study area
+                               boundary = study_area_bbox,
+                               boundary_type = 'clipsrc',
+                               #boundary = sf::st_bbox(c(xmin = 11.23602, ymin = 47.80478, xmax = 11.88867, ymax = 48.24261)), #must be in crs=4326 or specified in the st_bbox object
+                               provider ="geofabrik",
+                               layer = "multipolygons",
+                               stringsAsFactors = FALSE, 
+                               quiet = FALSE,
+                              #OSMEXT_DOWNLOAD_DIRECTORY=/path/to/osm/data
                               extra_tags=keys)
 
-lin_feat <- osmextract::oe_get("Washington",
-                                  layer = "lines", 
-                                  extra_tags=keys)
+lin_feat <- osmextract::oe_get("us/illinois",
+                                layer = "lines", 
+                               boundary = study_area_bbox,
+                               boundary_type = 'clipsrc',
+                               stringsAsFactors = FALSE, 
+                               extra_tags=keys)
 
 #save rds so you dont have to download each time
 saveRDS(pol_feat, "OSM_polygon_features.rds")
