@@ -169,7 +169,7 @@ ggplot(data = OSM_enhanced_LULC_map) +
                              "#ff7e26", "#ff7400",
                              "#FDB768", "#783F04",
                              "#FEF3AC", "#AD6A24",
-                             "#FDDB87", "#36454f"),
+                             "#FDDB87", "#400000"),
                     labels=c("industrial", "commercial", "institutional","residential","landuse_railway",
                              "open green", "protected area", "resourceful green area","heterogeneous green area", "barren soil","dense green area",
                              "water",
@@ -186,12 +186,13 @@ ggplot(data = OSM_enhanced_LULC_map) +
                              "hiking trails",
                              "railways",
                              "unused linear feature",
-                             "barriers"
+                             "barriers",
+                             "developed_na"
                     )) +
   theme_void() +
   theme(legend.position = "right")+
   coord_equal() 
-
+freq(OSM_enhanced_LULC_map)
 terra::writeRaster(
   OSM_enahnced_LULC_map,
   "Washington_OSM-enhanced_lcover_map.tif",
