@@ -98,7 +98,8 @@ vlayers <- OSMtoLULC_vlayers(OSM_polygon_layer = pol_feat,
 rlayers <- OSMtoLULC_rlayers(OSM_LULC_vlayers = vlayers,
                              study_area_extent = study_area_bbox)
 
-plot(rlayers[[15]])
+
+
 #=================================
 # Step 4: Stack & collapse rasters
 #=================================

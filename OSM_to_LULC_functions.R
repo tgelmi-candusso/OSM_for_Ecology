@@ -225,6 +225,8 @@ integrate_OSM_to_globalLULC <- function(OSM_lulc_map, global_lulc_map, reclass_t
   r7 <- classify(r6, reclass_table)
 
   r4 <- ifel(is.na(r3), r7, r3)
-
+ 
   return(as.factor(r4))
 } 
+
+
