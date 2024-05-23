@@ -139,7 +139,8 @@ OSMtoLULC_vlayers <- function(OSM_polygon_layer, OSM_line_layer){
 
 OSMtoLULC_rlayers <- function(OSM_LULC_vlayers, study_area_extent){
   classL1 <- OSM_LULC_vlayers
-  rtemplate <- rast(res=0.0001, ext = study_area_extent, crs= crs("EPSG:4326"))
+  rtemplate <- rast(res=0.0003, ext = study_area_extent, crs= "EPSG:4326") #PR
+  # rtemplate5 <- terra::project(rtemplate, "EPSG:5070")
   classL1  <- Filter(Negate(is.null), classL1) #eliminates any nulls
   
   refTable <- cbind.data.frame(
@@ -160,7 +161,9 @@ OSMtoLULC_rlayers <- function(OSM_LULC_vlayers, study_area_extent){
     if(as.character(st_geometry_type(classL1[[i]], by_geometry = FALSE)) %in% c("MULTIPOLYGON", "GEOMETRY")){
       temp1 <- classL1[[i]]
       if(nrow(temp1)>0){
-        # temp1 <- st_zm(temp1, drop = TRUE, what = "ZM") #drop any z & m dimensions or it won't convert to vector
+        temp1 <- st_make_valid(temp1) #PR
+        temp1 <- temp1 %>%  filter(!st_is_empty(.)) #PR
+        temp1 <- st_make_valid(temp1) # PR
         temp1 <- terra::project(svc(temp1)[1], rtemplate)
         temp1$priority <- refTable$priority[i]
         classL2[[i]] <- terra::rasterize(temp1, rtemplate, field="priority") 
@@ -169,6 +172,8 @@ OSMtoLULC_rlayers <- function(OSM_LULC_vlayers, study_area_extent){
     }else{
       temp1 <- classL1[[i]]
       if(!is.null(temp1)){
+        temp1 <- st_make_valid(temp1) #PR
+        temp1 <- temp1 %>%  filter(!st_is_empty(.)) #PR
         temp1 <- st_transform(temp1, "EPSG:5070")
         temp1 <- st_buffer(temp1, dist=refTable$buffer[i])
         temp1 <- terra::project(svc(temp1)[1], rtemplate)

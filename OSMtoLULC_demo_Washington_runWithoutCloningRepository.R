@@ -102,12 +102,12 @@ vlayers <- OSMtoLULC_vlayers(
 # Step 3: Convert all classes to rasters
 #=======================================
 
-extent <- ext(pol_feat)
+extent <- as.vector(ext(pol_feat))
 
 #run function
 rlayers <- OSMtoLULC_rlayers(
   OSM_LULC_vlayers = vlayers,
-  Spatextent = extent
+  study_area_extent = extent
 )
 
 
