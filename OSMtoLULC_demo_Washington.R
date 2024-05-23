@@ -42,7 +42,13 @@ keys <- unique(osm_kv$key)
 #crop study area directly here using the 'clipsrc' boundary type
 
 #Chicago
-study_area_bbox <- st_bbox(ext(c(-88.38422408, -87.45238124, 41.49280305, 42.34485453)), crs=st_crs(4269)) #3857
+bbox_crs <- 4269
+study_area_bbox <- st_bbox(ext(c(-88.38422408, -87.45238124, 41.49280305, 42.34485453)), crs=st_crs(bbox_crs)) #3857
+#change crs of bbox to 4326
+study_area_bbox <- study_area_bbox %>%
+  st_as_sfc() %>%
+  st_transform(crs = 4326) %>%
+  st_bbox()
 
 pol_feat <- osmextract::oe_get(place = "us/illinois", #can also use place = study_area_bbox to query for databases containing the study area
                                boundary = study_area_bbox,
@@ -86,11 +92,11 @@ vlayers <- OSMtoLULC_vlayers(OSM_polygon_layer = pol_feat,
 # Step 3: Convert all classes to rasters
 #=======================================
 
-extent <- ext(pol_feat)
+#extent <- st_bbox(ext(pol_feat))
 
 #run function
 rlayers <- OSMtoLULC_rlayers(OSM_LULC_vlayers = vlayers,
-                             Spatextent = extent)
+                             study_area_extent = study_area_bbox)
 
 
 #=================================
@@ -107,8 +113,8 @@ plot(OSM_only_map)
 #=========================================================
 
 #load the global landcover map raster
-#global_lulc_map <- rast("E:/cec_v2/Land_cover_2015v2_30m_TIF/NA_NALCMS_landcover_2015v2_30m/data/NA_NALCMS_landcover_2015v2_30m.tif")
-CEC_map <- rast("global_landcover_maps/Global_LULC_map_CEC_cropped_Washington.tif") 
+CEC_map <- rast("E:/cec_v2/Land_cover_2015v2_30m_TIF/NA_NALCMS_landcover_2015v2_30m/data/NA_NALCMS_landcover_2015v2_30m.tif")
+#CEC_map <- rast("global_landcover_maps/Global_LULC_map_CEC_cropped_Washington.tif") 
 
 #generate reclassification table, consisting of two columns, one with the global lulc code, and one with the corresponding OSM lulc code
 reclass_values <- read.csv("reclass_tables/reclass_cec_2_mcsc.csv") #extract only column values and convert as a matrix to use for reclassifying the global map into our landcover classes.
@@ -122,6 +128,7 @@ OSM_enhanced_LULC_map <- integrate_OSM_to_globalLULC(OSM_lulc_map = OSM_only_map
 #plot OSM-enhanced landcover map
 
 plot(OSM_enhanced_LULC_map)
+OSM_enhanced_LULC_map <-crop(OSM_enhanced_LULC_map, r3)
 
 terra::writeRaster(OSM_enahnced_LULC_map, "augmented_cec_lcover.tif", overwrite=TRUE)
 #plot(r6, type="classes")

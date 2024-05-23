@@ -137,11 +137,10 @@ OSMtoLULC_vlayers <- function(OSM_polygon_layer, OSM_line_layer){
 #needs a list of vectors with a priority class, and the study area's extent as a spatextent object, 
 #which can be obtained directly from the polygon layer obtained with osmextract::oe_get uisng the ext() function e.g. ext(pol_feat) or any other spatial dataframe objects
 
-OSMtoLULC_rlayers <- function(OSM_LULC_vlayers, Spatextent){
+OSMtoLULC_rlayers <- function(OSM_LULC_vlayers, study_area_extent){
   classL1 <- OSM_LULC_vlayers
-  rtemplate <- rast(res=0.0001, ext = as.vector(Spatextent), crs= crs("EPSG:4326"))
-  rtemplate <- project(rtemplate, "EPSG:5070")
-  classL1 <-Filter(Negate(is.null), classL1) #eliminates any nulls
+  rtemplate <- rast(res=0.0001, ext = study_area_extent, crs= crs("EPSG:4326"))
+  classL1  <- Filter(Negate(is.null), classL1) #eliminates any nulls
   
   refTable <- cbind.data.frame(
     "rid"=c(1:28), 
@@ -160,6 +159,7 @@ OSMtoLULC_rlayers <- function(OSM_LULC_vlayers, Spatextent){
   for(i in 1:28){
     if(as.character(st_geometry_type(classL1[[i]], by_geometry = FALSE)) %in% c("MULTIPOLYGON", "GEOMETRY")){
       temp1 <- classL1[[i]]
+      n<-28
       if(nrow(temp1)>0){
         # temp1 <- st_zm(temp1, drop = TRUE, what = "ZM") #drop any z & m dimensions or it won't convert to vector
         temp1 <- terra::project(svc(temp1)[1], rtemplate)
@@ -170,10 +170,9 @@ OSMtoLULC_rlayers <- function(OSM_LULC_vlayers, Spatextent){
     }else{
       temp1 <- classL1[[i]]
       if(!is.null(temp1)){
-        temp1 <- st_transform(temp1, crs(rtemplate))
+        temp1 <- st_transform(temp1, "EPSG:5070")
         temp1 <- st_buffer(temp1, dist=refTable$buffer[i])
-        #temp1 <- terra::project(vect(tempt), rtemplate)
-        temp1<-svc(temp1)[1]
+        temp1 <- terra::project(svc(temp1)[1], rtemplate)
         temp1$priority <- refTable$priority[i]
         classL2[[i]] <- terra::rasterize(temp1, rtemplate, field="priority")
         print(paste0("layer ", i, "/28 ready"))
@@ -182,13 +181,13 @@ OSMtoLULC_rlayers <- function(OSM_LULC_vlayers, Spatextent){
   }
   return(classL2)
 }
-plot(classL2[[i]])
+
 #### OSM_only_LULC_map ####
 
 #needs a list of rasters with a value indicating their overlay priority
 
 merge_OSM_LULC_layers <- function(OSM_raster_layers){ 
-  classL2 <- rlayers
+  classL2 <- OSM_raster_layers
   classL2 <-Filter(Negate(is.null), classL2)
   r3 <- terra::app(rast(classL2), fun='first', na.rm=TRUE)
   return(as.factor(r3))
@@ -203,8 +202,10 @@ integrate_OSM_to_globalLULC <- function(OSM_lulc_map, global_lulc_map, reclass_t
   #load global lulc raster that will work as a backgroudn layer to cover any missing data in the OSM_database
   r5 <-  global_lulc_map
   r3 <-  OSM_lulc_map
-  r3 <- project(r3, crs(r5)) #reproject OSM-only raster to global LULC raster to crop the global LULC
-  r5 <- crop(r5, r3) #crop
+
+  r3p <- project(r3, crs(r5)) #reproject OSM-only raster to global LULC raster to crop the global LULC
+  r5 <- crop(r5, r3p) #crop
+  #writeRaster(r5, "global_landcover_maps/*.img")
   
   # Given that one is Geographic and the other planar, it is safer to project
   fact1 <- round(dim(r5)[1:2] / dim(terra::project(r3, r5))[1:2])
@@ -213,12 +214,13 @@ integrate_OSM_to_globalLULC <- function(OSM_lulc_map, global_lulc_map, reclass_t
   #reproject cropped global LULC to our frameworks projection
   # transform cropped raster crs to EPSG 3857 , "EPSG:3857"
   r6 <- terra::project(r5, r3, method="near", align=TRUE)
-  
+
   # crop again after reprojection to ensure rasters have the same extent #crop again just in case (?)
   r6 <- terra::crop(r6, r3)
   r6 <- terra::extend(r6, r3) # this is to ensure the rasters line up before masking.
   r7 <- classify(r6, reclass_table)
-  
+
   r4 <- ifel(is.na(r3), r7, r3)
+
   return(as.factor(r4))
 } 
