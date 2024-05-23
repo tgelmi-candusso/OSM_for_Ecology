@@ -98,7 +98,7 @@ vlayers <- OSMtoLULC_vlayers(OSM_polygon_layer = pol_feat,
 rlayers <- OSMtoLULC_rlayers(OSM_LULC_vlayers = vlayers,
                              study_area_extent = study_area_bbox)
 
-
+plot(rlayers[[15]])
 #=================================
 # Step 4: Stack & collapse rasters
 #=================================
@@ -106,7 +106,7 @@ rlayers <- OSMtoLULC_rlayers(OSM_LULC_vlayers = vlayers,
 
 OSM_only_map <- merge_OSM_LULC_layers(OSM_raster_layers = rlayers)
 
-plot(OSM_only_map)
+plot(OSM_only_map==14)
 
 #=========================================================
 # Step 5: Integrate OSM features into Global landcover map 
@@ -128,7 +128,40 @@ OSM_enhanced_LULC_map <- integrate_OSM_to_globalLULC(OSM_lulc_map = OSM_only_map
 #plot OSM-enhanced landcover map
 
 plot(OSM_enhanced_LULC_map)
-OSM_enhanced_LULC_map <-crop(OSM_enhanced_LULC_map, r3)
+
+ggplot(data = OSM_enhanced_LULC_map) +
+  geom_raster(aes(x = x, y = y, fill = first)) +
+  scale_fill_manual(values=c("#843438","#df919a",	"#F88A50", "#EC5C3B","#FEF3AC",
+                             "#D4ED88","#AFDC70", "#83C966", "#51B25D","#d19c5f", "#1A9850",
+                             "#088da5",
+                             "#b0b0b0", "#000000",
+                             "#ff580f", "#ce7e00",
+                             "#ffde1a","#ffce00","#ffa700","#ff8d00", 
+                             "#ff7e26", "#ff7400",
+                             "#FDB768", "#783F04",
+                             "#FEF3AC", "#AD6A24",
+                             "#FDDB87", "#36454f"),
+                    labels=c("industrial", "commercial", "institutional","residential","landuse_railway",
+                             "open green", "protected area", "resourceful green area","heterogeneous green area", "barren soil","dense green area",
+                             "water",
+                             "parking surface", "building",
+                             "roads (v.h. traffic)",
+                             "sidewalks",
+                             "roads_na",
+                             "roads (v.l. traffic)",
+                             "roads (l. traffic)",
+                             "roads (m. traffic)",
+                             "roads (h.t.l.s)",
+                             "roads (h.t.h.s)",
+                             "trams/streetcars",
+                             "hiking trails",
+                             "railways",
+                             "unused linear feature",
+                             "barriers"
+                    )) +
+  theme_void() +
+  theme(legend.position = "right")+
+  coord_equal() 
 
 terra::writeRaster(OSM_enahnced_LULC_map, "augmented_cec_lcover.tif", overwrite=TRUE)
 #plot(r6, type="classes")

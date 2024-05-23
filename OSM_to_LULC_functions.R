@@ -159,7 +159,6 @@ OSMtoLULC_rlayers <- function(OSM_LULC_vlayers, study_area_extent){
   for(i in 1:28){
     if(as.character(st_geometry_type(classL1[[i]], by_geometry = FALSE)) %in% c("MULTIPOLYGON", "GEOMETRY")){
       temp1 <- classL1[[i]]
-      n<-28
       if(nrow(temp1)>0){
         # temp1 <- st_zm(temp1, drop = TRUE, what = "ZM") #drop any z & m dimensions or it won't convert to vector
         temp1 <- terra::project(svc(temp1)[1], rtemplate)
@@ -189,10 +188,15 @@ OSMtoLULC_rlayers <- function(OSM_LULC_vlayers, study_area_extent){
 merge_OSM_LULC_layers <- function(OSM_raster_layers){ 
   classL2 <- OSM_raster_layers
   classL2 <-Filter(Negate(is.null), classL2)
+  classL2 <- rev(classL2)
   r3 <- terra::app(rast(classL2), fun='first', na.rm=TRUE)
   return(as.factor(r3))
 }
-
+# newlist <- list()
+# newlist[[2]] <- rlayers[[4]]
+# newlist[[1]] <- rlayers[[15]]
+# r3 <- terra::app(rast(newlist), fun='first', na.rm=TRUE)
+# plot(r3==14)
 #### integrate_OSM_to_globalLULC ####
 
 #requires an OSM_only map, a global LULC map and a reclassification table between these, including the designation of any urban/developed landcover classes in the global LULC map as class number 28 (developed_na)
