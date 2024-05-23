@@ -121,7 +121,6 @@ OSM_only_map <- merge_OSM_LULC_layers(
 )
 
 plot(OSM_only_map)
-
 #=========================================================
 # Step 5: Integrate OSM features into Global landcover map 
 #=========================================================

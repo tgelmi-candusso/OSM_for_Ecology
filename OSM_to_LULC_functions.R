@@ -192,16 +192,18 @@ OSMtoLULC_rlayers <- function(OSM_LULC_vlayers, study_area_extent){
 
 merge_OSM_LULC_layers <- function(OSM_raster_layers){ 
   classL2 <- OSM_raster_layers
-  classL2 <-Filter(Negate(is.null), classL2)
-  classL2 <- rev(classL2)
+  classL2 <- Filter(Negate(is.null), classL2)
+  classL2 <- rev(classL2) #Seattle loses class 16 when we revert but reverting works as expected to overlay classes
   r3 <- terra::app(rast(classL2), fun='first', na.rm=TRUE)
   return(as.factor(r3))
 }
 # newlist <- list()
-# newlist[[2]] <- rlayers[[4]]
 # newlist[[1]] <- rlayers[[15]]
+# newlist[[2]] <- rlayers[[17]]
 # r3 <- terra::app(rast(newlist), fun='first', na.rm=TRUE)
-# plot(r3==14)
+# r3 <- terra::app(rast(rlayers[1:28]), fun='first', na.rm=TRUE)
+# plot(as.factor(r3==16))
+
 #### integrate_OSM_to_globalLULC ####
 
 #requires an OSM_only map, a global LULC map and a reclassification table between these, including the designation of any urban/developed landcover classes in the global LULC map as class number 28 (developed_na)
