@@ -139,7 +139,7 @@ OSMtoLULC_vlayers <- function(OSM_polygon_layer, OSM_line_layer){
 
 OSMtoLULC_rlayers <- function(OSM_LULC_vlayers, study_area_extent){
   classL1 <- OSM_LULC_vlayers
-  rtemplate <- rast(res=0.0003, ext = study_area_extent, crs= "EPSG:4326") #PR
+  rtemplate <- rast(res=0.0001, ext = study_area_extent, crs= "EPSG:4326") #PR
   # rtemplate5 <- terra::project(rtemplate, "EPSG:5070")
   classL1  <- Filter(Negate(is.null), classL1) #eliminates any nulls
   
@@ -174,6 +174,7 @@ OSMtoLULC_rlayers <- function(OSM_LULC_vlayers, study_area_extent){
       if(!is.null(temp1)){
         temp1 <- st_make_valid(temp1) #PR
         temp1 <- temp1 %>%  filter(!st_is_empty(.)) #PR
+        temp1 <- st_make_valid(temp1) # PR
         temp1 <- st_transform(temp1, "EPSG:5070")
         temp1 <- st_buffer(temp1, dist=refTable$buffer[i])
         temp1 <- terra::project(svc(temp1)[1], rtemplate)
@@ -195,14 +196,8 @@ merge_OSM_LULC_layers <- function(OSM_raster_layers){
   classL2 <- Filter(Negate(is.null), classL2)
   classL2 <- rev(classL2) #Seattle loses class 16 when we revert but reverting works as expected to overlay classes
   r3 <- terra::app(rast(classL2), fun='first', na.rm=TRUE)
-  return(as.factor(r3))
+  return(r3)
 }
-# newlist <- list()
-# newlist[[1]] <- rlayers[[15]]
-# newlist[[2]] <- rlayers[[17]]
-# r3 <- terra::app(rast(newlist), fun='first', na.rm=TRUE)
-# r3 <- terra::app(rast(rlayers[1:28]), fun='first', na.rm=TRUE)
-# plot(as.factor(r3==16))
 
 #### integrate_OSM_to_globalLULC ####
 
