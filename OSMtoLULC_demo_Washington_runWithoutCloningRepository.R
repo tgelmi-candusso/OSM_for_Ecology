@@ -87,7 +87,7 @@ if(
 }
 
 #================================
-# Step 2: Categorize OSM features
+# Step 2a: Categorize OSM features
 #================================
 
 # Filter OSM features from Table S4 and categorize into classes. 
@@ -102,7 +102,7 @@ vlayers <- OSMtoLULC_vlayers(
 )
 
 #=======================================
-# Step 3: Convert all classes to rasters
+# Step 2b: Convert all classes to rasters
 #=======================================
 
 #here we convert all the filtered OSM features into raster layers. 
@@ -122,7 +122,7 @@ rlayers <- OSMtoLULC_rlayers(
 
 
 #=================================
-# Step 4: Stack & collapse rasters
+# Step 3: Stack & collapse rasters
 #=================================
 
 #Here we merge all layers into one raster layer, by overlaying rasters following their priority. 
@@ -138,7 +138,7 @@ OSM_only_map <- merge_OSM_LULC_layers(
 plot(OSM_only_map) 
 
 #=========================================================
-# Step 5: Integrate OSM features into Global landcover map 
+# Step 4: Integrate OSM features into Global landcover map 
 #=========================================================
 
 # The OSM database is community based in current expansion, and may still have gaps of information in certain areas. 
