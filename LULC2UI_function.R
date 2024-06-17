@@ -5,6 +5,7 @@ LULCtoUI <- function(osm_enhanced_LULC){
   
   osm_landcover <- OSM_enhanced_LULC_map
   
+  osm_landcover <- project(osm_landcover, "EPSG: 5070")
   #proportion of building polygons 
   buildings <- osm_landcover == 14
   built_prop <- aggregate(buildings, fact=15, fun="mean") #500m
@@ -90,9 +91,10 @@ LULCtoUI <- function(osm_enhanced_LULC){
   water_0 <- project(water_0, HIF_tgc1)
   HIF_tgc1<-terra::cover(water_0, HIF_tgc1)
   HIF_tgc1 <-terra::ifel(HIF_tgc1 <= 0, NA, HIF_tgc1)
-  HIF_tgc1st <- (HIF_tgc1 - 1.8) / (5 - 1.8)
+  HIF_tgc1st <- (HIF_tgc1 - 1) / (5 - 1) #changed min from Chicago values to avoid negatives across cities - 1.8) / (5 - 1.8) #these ranges were from Chicago and may on negatives 
   HIF_tgc1st<- HIF_tgc1st*100
   
   return(HIF_tgc1st)
 }
+
 
