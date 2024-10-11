@@ -1,7 +1,7 @@
 #################################
 #   OSM for ecology - demo   ####
 #   Gelmi-Candusso et al.    ####
-#       for MEE review       ####
+#           2024             ####
 #################################
 
 #### Notes
@@ -14,6 +14,9 @@
 
 
 ## libraries
+list.of.packages <- c("devtools", "osmextract", "tidyterra", "dplyr", "sf", "terra", "readr", "ggplot2", "googledrive")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
 
 library(osmextract)
 library(tidyterra)
@@ -23,6 +26,8 @@ library(sf)
 library(readr)
 library(devtools)
 library(ggplot2)
+library(googledrive)
+
 devtools::source_url(
   "https://raw.githubusercontent.com/tgelmi-candusso/OSM_for_Ecology/main/OSM_to_LULC_functions.R"
 )
@@ -49,13 +54,35 @@ keys <- unique(osm_kv$key)
 # if you have not done so already, 
 # otherwise read in the already saved files. 
 
+#closest geofrabrik query to our study area, can be sometimes city level, state level or country level, to find which is start with querying at the study are level, e.g. city and see if it matches, if not move on to state and if not to country
+#if closest geofabrik dataset is too large you will have to clip to a smaller extent using the boundary parameters
+#if you dont have to do so, comment out the boundary types
+
+#note:
+#place <- "Seattle" #will download Washington state
+place <- "Washington" #will download Washington DC, the CEC crop in the github is for Washington DC but any city in North America can be done with the full CEC layer, for world applications use Copernicus
+
+
+#another example, note you cannot use CEC for Lima you have to use another global layer like Copernicus or ESA World Cover, so if doing this demo, step 4 cannot be done with this example
+#study area <- "Lima" gives Lybia therefore we move on to the country level because the province of Lima is Lima.
+# place <- "Peru" 
+# #extent study area for Lima, inp
+# xmin=-77.36910
+# ymin=-12.3198
+# xmax=-76.75120
+# ymax=-11.75407
+# crssa=4326
+
 if(
   !file.exists("OSM_polygon_features.rds")
 ){
   pol_feat <- osmextract::oe_get(
-    "Washington",
+    place,
     provider="geofabrik",
-    layer = "multipolygons", 
+    layer = "multipolygons",
+    # boundary = st_bbox(c(xmin=xmin,ymin=ymin,xmax=xmax,ymax=ymax),
+    #                    crs=st_crs(crssa)), #got the boundaries from: http://bboxfinder.com/
+    # boundary_type = "clipsrc", 
     extra_tags=keys
   )
   saveRDS(
@@ -72,8 +99,11 @@ if(
   !file.exists("OSM_linear_features.rds")
 ) {
   lin_feat <- osmextract::oe_get(
-    "Washington",
-    layer = "lines", 
+    place,
+    layer = "lines",
+    # boundary = st_bbox(c(xmin=xmin,ymin=ymin,xmax=xmax,ymax=ymax), 
+    #                    crs=st_crs(crssa)), #got the boundaries from: http://bboxfinder.com/
+    # boundary_type = "clipsrc", 
     extra_tags=keys
   )
   saveRDS(
@@ -112,6 +142,8 @@ vlayers <- OSMtoLULC_vlayers(
 # To rasterize we generate a raster template using the extent of the study area downloaded in step 1.
 
 #define the extent of study area
+#can also be defined using bbox search engine "https://bboxfinder.com in EPSG:4326
+#e.g.  c(xmin, ymin, xmax, ymax)
 extent <- as.vector(ext(pol_feat))
 
 #run function
@@ -136,7 +168,50 @@ OSM_only_map <- merge_OSM_LULC_layers(
 # This map includes ONLY OSM features, 
 # this is the reference map we used in the manuscript to analyze completeness of our framework
 plot(OSM_only_map) 
+OSMonlyfig <- ggplot(data = as.factor(OSM_only_map)) +
+  geom_raster(aes(x = x, y = y, fill = first)) +
+  scale_fill_manual(values=c("#843438","#df919a",	"#F88A50", "#EC5C3B","#FEF3AC",
+                             "#D4ED88","#AFDC70", "#83C966", "#51B25D","#d19c5f", "#1A9850",
+                             "#088da5",
+                             "#b0b0b0", "#000000",
+                             "#ff580f", "#ce7e00",
+                             "#ffde1a","#ffce00","#ffa700","#ff8d00", 
+                             "#ff7e26", "#ff7400",
+                             "#FDB768", "#783F04",
+                             "#FEF3AC", "#AD6A24",
+                             "#FDDB87"),#, "#400000"),
+                    breaks = c(1:27),#8),
+                    labels=c("industrial", "commercial", "institutional","residential","landuse_railway",
+                             "open green", "protected area", "resourceful green area","heterogeneous green area", "barren soil","dense green area",
+                             "water",
+                             "parking surface", "buildings",
+                             "roads (v.h. traffic)",
+                             "sidewalks",
+                             "roads_na",
+                             "roads (v.l. traffic)",
+                             "roads (l. traffic)",
+                             "roads (m. traffic)",
+                             "roads (h.t.l.s)",
+                             "roads (h.t.h.s)",
+                             "trams/streetcars",
+                             "hiking trails",
+                             "railways",
+                             "unused linear feature",
+                             "barriers"))+#,
+  #"developed_na")) +
+  theme_void() +
+  theme(legend.position = "right")+
+  coord_equal() 
 
+OSMonlyfig
+
+ggsave(plot=OSMonlyfig, filename="OSM_only_LULC_map.png", dpi=600)
+
+# install.packages("tmap")
+# library(tmap)
+# tmap_mode("view")
+# tm_shape(OSM_only_map)+
+#   tm_raster()
 #=========================================================
 # Step 4: Integrate OSM features into Global landcover map 
 #=========================================================
@@ -158,7 +233,10 @@ download.file(
 CEC_map <- rast(
   "Global_LULC_map_CEC_cropped_Washington.img"
 ) 
-plot(CEC_map)
+
+
+## alternative use ESA map, load global map from google drive
+
 
 # generate reclassification table, consisting of two columns, 
 # one with the global lulc code, and one with the corresponding 
@@ -232,4 +310,3 @@ terra::writeRaster(
   "Washington_OSM-enhanced_lcover_map.tif",
   overwrite=TRUE
 )
-
