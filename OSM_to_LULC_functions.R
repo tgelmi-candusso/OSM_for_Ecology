@@ -158,7 +158,7 @@ OSMtoLULC_rlayers <- function(OSM_LULC_vlayers, study_area_extent){
   classL2 <- list()
   
   for(i in 1:28){
-    if(as.character(st_geometry_type(classL1[[i]], by_geometry = FALSE)) %in% c("MULTIPOLYGON", "GEOMETRY")){
+    if(as.character(st_geometry_type(classL1[[i]], by_geometry = FALSE)) %in% c("POLYGON","MULTIPOLYGON", "GEOMETRY")){
       temp1 <- classL1[[i]]
       if(nrow(temp1)>0){
         temp1 <- st_make_valid(temp1) #PR
